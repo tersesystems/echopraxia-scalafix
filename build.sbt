@@ -5,17 +5,17 @@ val echopraxiaPlusScalaVersion = "1.1.0"
 
 inThisBuild(
   List(
-    organization := "com.example",
-    homepage := Some(url("https://github.com/com/example")),
+    organization := "com.tersesystems",
+    homepage := Some(url("https://github.com/wsargent/echopraxia-scalafix")),
     licenses := List(
       "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
     ),
     developers := List(
       Developer(
-        "example-username",
-        "Example Full Name",
+        "wsargent",
+        "Will Sargent",
         "example@email.com",
-        url("https://example.com")
+        url("https://tersesystems.com")
       )
     ),
     semanticdbEnabled := true,
