@@ -4,13 +4,12 @@
 
 ## Running
 
-Most likely you will want to use the [sbt integration](https://scalacenter.github.io/scalafix/docs/users/installation.html) and do it from inside there:
+Most likely you will want to use the [sbt integration](https://scalacenter.github.io/scalafix/docs/users/installation.html) and do it from inside there, using the [external rules](https://scalacenter.github.io/scalafix/docs/rules/external-rules.html):
 
 ```
 scalafixEnable
+scalafix dependency:EchopraxiaWrapMethodWithLogger@com.tersesystems:echopraxia-scalafix:VERSION
 ```
-
-
 
 ## EchopraxiaWrapMethodWithLogger
 
