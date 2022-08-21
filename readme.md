@@ -15,6 +15,30 @@ scalafix dependency:EchopraxiaWrapMethodWithLogger@com.tersesystems:echopraxia-s
 
 This scalafix rule will wrap methods in a flow logger block, using a [flow or trace logger](https://github.com/tersesystems/echopraxia-plusscala#trace-and-flow-loggers).
 
+For example, 
+
+```scala
+object Main {
+  private val flowLogger = FlowLoggerFactory.getLogger(getClass)
+
+  def add(first: Int, second: Int): Int = {
+    first + second
+  }
+}
+```
+
+would be rewritten as:
+
+```scala
+object Main {
+  private val flowLogger = FlowLoggerFactory.getLogger(getClass)
+
+  def add(first: Int, second: Int): Int = flowLogger.trace {
+    first + second
+  }
+}
+```
+
 Add the configuration to [`.scalafix.conf`](https://scalacenter.github.io/scalafix/docs/users/configuration.html)
 
 ```
