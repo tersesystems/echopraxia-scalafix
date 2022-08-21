@@ -4,3 +4,4 @@ target/
 .idea/
 .bsp/
 .vscode/
+.sbt/
