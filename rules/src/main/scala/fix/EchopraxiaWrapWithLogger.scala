@@ -3,14 +3,13 @@ package fix
 import scalafix.v1._
 import scala.meta._
 
-class EchopraxiaScalafix extends SemanticRule("EchopraxiaScalafix") {
+class EchopraxiaWrapWithLogger extends SemanticRule("EchopraxiaWrapWithLogger") {
 
   private val loggerType = SymbolMatcher.normalized("com.tersesystems.echopraxia.plusscala.flow.FlowLogger")
   private val loggerName = "flowLogger"
   private val loggerMethod = "trace"
 
   override def fix(implicit doc: SemanticDocument): Patch = {
-
     doc.tree.collect {
       case Defn.Def(_, _, _, _, _, body) =>
         body match {

@@ -1,5 +1,5 @@
 /*
-rule = EchopraxiaScalafix
+rule = EchopraxiaWrapWithLogger
 */
 package fix
 
