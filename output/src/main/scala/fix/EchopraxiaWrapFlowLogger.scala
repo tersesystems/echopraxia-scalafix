@@ -2,7 +2,7 @@ package fix
 import com.tersesystems.echopraxia.plusscala.flow._
 import com.tersesystems.echopraxia.api.Value.ObjectValue
 
-object EchopraxiaWrapFlowLogger_Test {
+object EchopraxiaWrapMethodWithLogger_Test {
   object FieldBuilderWithUnit extends DefaultFlowFieldBuilder {
     implicit val unitToValue: ToValue[Unit] = _ => ObjectValue.EMPTY
   }
@@ -12,4 +12,12 @@ object EchopraxiaWrapFlowLogger_Test {
   final def someMethod: Unit = flowLogger.trace {
     println("hello")
   }
+
+  def methodWithoutBlock = flowLogger.trace { println("hello") }
+
+  private def privateMethod = println("hello")
+
+  // scalafix:off EchopraxiaWrapMethodWithLogger
+  def scalafixOff = println("hello")
+  // scalafix:on
 }

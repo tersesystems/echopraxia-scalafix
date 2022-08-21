@@ -1,7 +1,7 @@
 /*
-rule = EchopraxiaWrapWithLogger
-EchopraxiaWrapWithLogger.loggerName = logger
-EchopraxiaWrapWithLogger.loggerMethod = debug
+rule = EchopraxiaWrapMethodWithLogger
+EchopraxiaWrapMethodWithLogger.loggerName = logger
+EchopraxiaWrapMethodWithLogger.loggerMethod = debug
 */
 package fix
 

@@ -2,6 +2,9 @@ target/
 *.class
 *.log
 .idea/
+.metals/
+.bloop/
 .bsp/
 .vscode/
 .sbt/
+project/metals.sbt
