@@ -8,7 +8,6 @@ import scala.meta._
 
 class EchopraxiaWrapMethodWithLogger(config: EchopraxiaWrapMethodWithLogger.Config) extends SemanticRule("EchopraxiaWrapMethodWithLogger") {
 
-  private val loggerType = SymbolMatcher.normalized(config.loggerType)
   private val loggerName = config.loggerName
   private val loggerMethod = config.loggerMethod
   private val methodAccess = config.methodAccess
@@ -26,7 +25,7 @@ class EchopraxiaWrapMethodWithLogger(config: EchopraxiaWrapMethodWithLogger.Conf
       case defn @ Defn.Def(mods, methodName, tparams, paramss, decltpe, body) =>        
         if (isValidAccessModifier(mods)) {
           body match {
-            case Term.Apply(Term.Select(name, _), _) if matchesType(name) =>
+            case Term.Apply(Term.Select(name, _), _) if matchesLoggerName(name) =>
               // Is "flowLogger.trace" already existing?  Then don't add it again.
               // Technically this looks for a matching symbol so you can have a different name on the logger.
               Patch.empty
@@ -43,7 +42,7 @@ class EchopraxiaWrapMethodWithLogger(config: EchopraxiaWrapMethodWithLogger.Conf
     }.asPatch
   }
 
-  private def matchesType(name: Term)(implicit doc: SemanticDocument): Boolean = {
+  private def matchesLoggerName(name: Term)(implicit doc: SemanticDocument): Boolean = {
     name match {
       case Term.Name(n) if n == loggerName =>
         true
@@ -68,7 +67,6 @@ class EchopraxiaWrapMethodWithLogger(config: EchopraxiaWrapMethodWithLogger.Conf
 object EchopraxiaWrapMethodWithLogger {
   case class Config(loggerName: String = "flowLogger",
                     loggerMethod: String = "trace",
-                    loggerType: String = "com.tersesystems.echopraxia.plusscala.flow.FlowLogger",
                     methodAccess: String = "public")
 
   object Config {

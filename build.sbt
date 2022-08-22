@@ -47,6 +47,7 @@ lazy val input = projectMatrix
     publish / skip := true,
     libraryDependencies ++= Seq(
       "com.tersesystems.echopraxia.plusscala" %% "flow-logger" % echopraxiaPlusScalaVersion,
+      "com.tersesystems.echopraxia.plusscala" %% "logger" % echopraxiaPlusScalaVersion,
     )
   )
   .defaultAxes(VirtualAxis.jvm)
@@ -57,6 +58,7 @@ lazy val output = projectMatrix
     publish / skip := true,
     libraryDependencies ++= Seq(
       "com.tersesystems.echopraxia.plusscala" %% "flow-logger" % echopraxiaPlusScalaVersion,
+      "com.tersesystems.echopraxia.plusscala" %% "logger" % echopraxiaPlusScalaVersion,
     )
   )
   .defaultAxes(VirtualAxis.jvm)
