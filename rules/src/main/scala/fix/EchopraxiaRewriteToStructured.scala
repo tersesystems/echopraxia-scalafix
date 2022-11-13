@@ -28,13 +28,22 @@ class EchopraxiaRewriteToStructured(config: EchopraxiaRewriteToStructured.Config
     }
   }
 
-  private def rewrite(loggerTerm: Term, methodTerm: Term, parts: List[Lit], args: List[Term]): String = {
+  private def rewrite(loggerTerm: Term, methodTerm: Term, parts: List[Lit], args: List[Term])(implicit doc: SemanticDocument): String = {
     if (args.isEmpty) {
       val template = parts.map(_.value.toString).mkString("{}")
       s"""$loggerTerm.$methodTerm("$template")"""
     } else {
       val template = parts.map(_.value.toString).mkString("{}")
-      val values = args.map(arg => s"""fb.value("$arg", $arg)""")
+      val values = args.map { arg =>
+         // if the term name references an exception, I want 
+         // fb.exception($arg)
+         arg match {
+           case argName: Term =>
+            val info = argName.symbol.info.get            
+            println("signature " + info.signature)
+         }
+         s"""fb.value("$arg", $arg)"""
+      }
       val body = if (values.size == 1) values.head else s"""fb.list(${values.mkString(", ")})"""
       s"""$loggerTerm.$methodTerm("$template", fb => $body)"""
     }
