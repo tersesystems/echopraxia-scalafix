@@ -8,7 +8,6 @@ import scala.meta._
 
 class EchopraxiaWrapMethodWithLogger(config: EchopraxiaWrapMethodWithLogger.Config) extends SemanticRule("EchopraxiaWrapMethodWithLogger") {
 
-  private val loggerType = SymbolMatcher.normalized(config.loggerType)
   private val loggerName = config.loggerName
   private val loggerMethod = config.loggerMethod
   private val methodAccess = config.methodAccess
