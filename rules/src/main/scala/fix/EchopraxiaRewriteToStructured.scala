@@ -28,21 +28,41 @@ class EchopraxiaRewriteToStructured(config: EchopraxiaRewriteToStructured.Config
     }
   }
 
+  def isThrowable(signature: Signature): Boolean = {
+    signature match {
+      case ValueSignature(tpe) =>
+        tpe match {
+          case TypeRef(prefix, symbol, typeArguments) =>
+            // Check that it has throwable at the root?
+            val className = toFqn(symbol)
+            val cl = this.getClass.getClassLoader
+            classOf[Throwable].isAssignableFrom(cl.loadClass(className))
+          case other =>
+            false
+        }
+      case other =>
+        false
+    }
+  }
+
+  def toFqn(symbol: Symbol): String = symbol.value.replaceAll("/", ".").replaceAll("\\.$", "\\$").stripSuffix("#").stripPrefix("_root_.")
+
   private def rewrite(loggerTerm: Term, methodTerm: Term, parts: List[Lit], args: List[Term])(implicit doc: SemanticDocument): String = {
     if (args.isEmpty) {
       val template = parts.map(_.value.toString).mkString("{}")
       s"""$loggerTerm.$methodTerm("$template")"""
     } else {
       val template = parts.map(_.value.toString).mkString("{}")
-      val values = args.map { arg =>
-         // if the term name references an exception, I want 
-         // fb.exception($arg)
-         arg match {
-           case argName: Term =>
-            val info = argName.symbol.info.get            
-            println("signature " + info.signature)
-         }
-         s"""fb.value("$arg", $arg)"""
+      val values = args.map {
+        case arg@(argName: Term) =>
+          if (isThrowable(argName.symbol.info.get.signature)) {
+            s"""fb.exception($arg)"""
+          } else {
+            s"""fb.value("$arg", $arg)"""
+          }
+        case other =>
+          // XXX how do I log an error?
+          println("WAT")
       }
       val body = if (values.size == 1) values.head else s"""fb.list(${values.mkString(", ")})"""
       s"""$loggerTerm.$methodTerm("$template", fb => $body)"""
