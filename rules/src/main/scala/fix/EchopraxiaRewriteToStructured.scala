@@ -6,7 +6,12 @@ import scalafix.v1._
 
 import scala.meta._
 
-class EchopraxiaRewriteToStructured extends SemanticRule("EchopraxiaRewriteToStructured") {
+class EchopraxiaRewriteToStructured(config: EchopraxiaRewriteToStructured.Config) extends SemanticRule("EchopraxiaRewriteToStructured") {
+
+  private val loggerClass: String = config.loggerClass
+  private val fieldBuilderMethod: String = config.fieldBuilderMethod
+
+  def this() = this(EchopraxiaRewriteToStructured.Config())
 
   override def fix(implicit doc: SemanticDocument): Patch = {
     doc.tree.collect {
@@ -16,7 +21,7 @@ class EchopraxiaRewriteToStructured extends SemanticRule("EchopraxiaRewriteToStr
   }
 
   private def matchesType(qual: Term)(implicit doc: SemanticDocument): Boolean = {
-    val logger = SymbolMatcher.normalized("com.tersesystems.echopraxia.plusscala.Logger")
+    val logger = SymbolMatcher.normalized(loggerClass)
     val info: SymbolInformation = qual.symbol.info.get
     info.signature match {
       case MethodSignature(_, _, TypeRef(_, symbol, _)) =>
@@ -56,11 +61,11 @@ class EchopraxiaRewriteToStructured extends SemanticRule("EchopraxiaRewriteToStr
           if (isThrowable(arg.symbol.info.get.signature)) {
             s"""fb.exception($arg)"""
           } else {
-            s"""fb.value("$arg", $arg)"""
+            s"""fb.$fieldBuilderMethod("$arg", $arg)"""
           }
         case other =>
           // XXX I don't think this is possible?
-          s"""fb.value("$other", $other)"""
+          s"""fb.$fieldBuilderMethod("$other", $other)"""
       }
       val body = if (values.size == 1) values.head else s"""fb.list(${values.mkString(", ")})"""
       s"""$loggerTerm.$methodTerm("$template", fb => $body)"""
@@ -70,7 +75,10 @@ class EchopraxiaRewriteToStructured extends SemanticRule("EchopraxiaRewriteToStr
 
 
 object EchopraxiaRewriteToStructured {
-  case class Config(loggerName: String = "logger")
+  case class Config(
+    loggerClass: String = "com.tersesystems.echopraxia.plusscala.Logger",
+    fieldBuilderMethod: String = "value"
+  )
 
   object Config {
     val default = Config()
