@@ -6,11 +6,7 @@ import scalafix.v1._
 
 import scala.meta._
 
-class EchopraxiaRewriteToStructured(config: EchopraxiaRewriteToStructured.Config) extends SemanticRule("EchopraxiaRewriteToStructured") {
-
-  private val loggerName = config.loggerName
-
-  def this() = this(EchopraxiaRewriteToStructured.Config())
+class EchopraxiaRewriteToStructured extends SemanticRule("EchopraxiaRewriteToStructured") {
 
   override def fix(implicit doc: SemanticDocument): Patch = {
     doc.tree.collect {
@@ -19,33 +15,35 @@ class EchopraxiaRewriteToStructured(config: EchopraxiaRewriteToStructured.Config
     }.asPatch
   }
 
-  private def matchesType(name: Term)(implicit doc: SemanticDocument): Boolean = {
-    name match {
-      case Term.Name(n) if n == loggerName =>
-        true
-      case _ =>
+  private def matchesType(qual: Term)(implicit doc: SemanticDocument): Boolean = {
+    val logger = SymbolMatcher.normalized("com.tersesystems.echopraxia.plusscala.Logger")
+    val info: SymbolInformation = qual.symbol.info.get
+    info.signature match {
+      case MethodSignature(_, _, TypeRef(_, symbol, _)) =>
+        //println("symbol = " + symbol.structure)
+        logger.matches(symbol)
+      case other =>
+        //println("other symbol = " + other.structure)
         false
     }
   }
 
   def isThrowable(signature: Signature): Boolean = {
+    def toFqn(symbol: Symbol): String = symbol
+      .value
+      .replaceAll("/", ".")
+      .replaceAll("\\.$", "\\$")
+      .stripSuffix("#")
+      .stripPrefix("_root_.")
+
     signature match {
-      case ValueSignature(tpe) =>
-        tpe match {
-          case TypeRef(prefix, symbol, typeArguments) =>
-            // Check that it has throwable at the root?
-            val className = toFqn(symbol)
-            val cl = this.getClass.getClassLoader
-            classOf[Throwable].isAssignableFrom(cl.loadClass(className))
-          case other =>
-            false
-        }
-      case other =>
+      case ValueSignature(TypeRef(_, symbol, _)) =>
+        val cl = this.getClass.getClassLoader
+        classOf[Throwable].isAssignableFrom(cl.loadClass(toFqn(symbol)))
+      case _ =>
         false
     }
   }
-
-  def toFqn(symbol: Symbol): String = symbol.value.replaceAll("/", ".").replaceAll("\\.$", "\\$").stripSuffix("#").stripPrefix("_root_.")
 
   private def rewrite(loggerTerm: Term, methodTerm: Term, parts: List[Lit], args: List[Term])(implicit doc: SemanticDocument): String = {
     if (args.isEmpty) {
@@ -54,15 +52,15 @@ class EchopraxiaRewriteToStructured(config: EchopraxiaRewriteToStructured.Config
     } else {
       val template = parts.map(_.value.toString).mkString("{}")
       val values = args.map {
-        case arg@(argName: Term) =>
-          if (isThrowable(argName.symbol.info.get.signature)) {
+        case arg: Term.Name =>
+          if (isThrowable(arg.symbol.info.get.signature)) {
             s"""fb.exception($arg)"""
           } else {
             s"""fb.value("$arg", $arg)"""
           }
         case other =>
-          // XXX how do I log an error?
-          println("WAT")
+          // XXX I don't think this is possible?
+          s"""fb.value("$other", $other)"""
       }
       val body = if (values.size == 1) values.head else s"""fb.list(${values.mkString(", ")})"""
       s"""$loggerTerm.$methodTerm("$template", fb => $body)"""
