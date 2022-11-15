@@ -1,7 +1,7 @@
 lazy val V = _root_.scalafix.sbt.BuildInfo
 
 lazy val rulesCrossVersions = Seq(V.scala213, V.scala212)
-val echopraxiaPlusScalaVersion = "1.1.0"
+val echopraxiaPlusScalaVersion = "1.1.2"
 
 inThisBuild(
   List(
@@ -47,6 +47,7 @@ lazy val input = projectMatrix
     publish / skip := true,
     libraryDependencies ++= Seq(
       "com.tersesystems.echopraxia.plusscala" %% "flow-logger" % echopraxiaPlusScalaVersion,
+      "com.tersesystems.echopraxia.plusscala" %% "logger" % echopraxiaPlusScalaVersion,
     )
   )
   .defaultAxes(VirtualAxis.jvm)
@@ -57,6 +58,7 @@ lazy val output = projectMatrix
     publish / skip := true,
     libraryDependencies ++= Seq(
       "com.tersesystems.echopraxia.plusscala" %% "flow-logger" % echopraxiaPlusScalaVersion,
+      "com.tersesystems.echopraxia.plusscala" %% "logger" % echopraxiaPlusScalaVersion,
     )
   )
   .defaultAxes(VirtualAxis.jvm)
