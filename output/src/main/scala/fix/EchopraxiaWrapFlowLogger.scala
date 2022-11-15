@@ -1,6 +1,5 @@
 package fix
 import com.tersesystems.echopraxia.plusscala.flow._
-import com.tersesystems.echopraxia.api.Value.ObjectValue
 
 object EchopraxiaWrapMethodWithLogger_Test {
 
