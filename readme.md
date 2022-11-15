@@ -1,12 +1,16 @@
 # Scalafix rules for Echopraxia
 
-[Echopraxia](https://github.com/tersesystems/echopraxia-plusscala) has 
+[Echopraxia](https://github.com/tersesystems/echopraxia-plusscala) is a structured logging framework that can organize arguments into key/value fields using Scala's implicit type safe mapping system, without any additional import tax.
+
+These [scalafix](https://scalacenter.github.io/scalafix/) rules are useful for adding flow loggers to methods, and rewriting logging statements that use string interpolation to use Echopraxia's FieldBuilder API.
 
 ## Running
 
 Most likely you will want to use the [sbt integration](https://scalacenter.github.io/scalafix/docs/users/installation.html) and do it from inside there, using the [external rules](https://scalacenter.github.io/scalafix/docs/rules/external-rules.html):
 
 ## EchopraxiaRewriteToStructured
+
+This scalafix rule will rewrite statements that use string interpolation to structured arguments.
 
 ### Running
 
@@ -17,11 +21,11 @@ scalafix dependency:EchopraxiaRewriteToStructured@com.tersesystems.echopraxia:sc
 
 ### Usage
 
-This scalafix rule will rewrite statements that use string interpolation to structured arguments.
-
-For example,
+Given a logging statement that uses string interpolation, the `EchopraxiaRewriteToStructured` rule will rewrite:
 
 ```scala
+private val logger = com.tersesystems.echopraxia.plusscala.LoggerFactory.getLogger
+
 final def someMethod: Unit = {
   val world = "world"
   val count = 2
@@ -29,9 +33,11 @@ final def someMethod: Unit = {
 }
 ```
 
-to
+would be rewritten as:
 
 ```scala
+private val logger = com.tersesystems.echopraxia.plusscala.LoggerFactory.getLogger
+
 final def someMethod: Unit = {
   val world = "world"
   val count = 2
@@ -39,7 +45,7 @@ final def someMethod: Unit = {
 }
 ```
 
-You can change the name of the logger as appropriate:
+You can change the class of the logger as appropriate, if you have a custom logger.
 
 ```
 // .scalafix.conf
@@ -47,11 +53,12 @@ rules = [
   EchopraxiaRewriteToStructured
 ]
 
-# The name of the logger variable to use, i.e. `logger`
-EchopraxiaRewriteToStructured.loggerName = log
+EchopraxiaRewriteToStructured.loggerClass = MyLoggerClass
 ```
 
 ## EchopraxiaWrapMethodWithLogger
+
+This scalafix rule will wrap methods in a flow logger block, using a [flow or trace logger](https://github.com/tersesystems/echopraxia-plusscala#trace-and-flow-loggers).
 
 ### Running
 
@@ -62,9 +69,7 @@ scalafix dependency:EchopraxiaWrapMethodWithLogger@com.tersesystems.echopraxia:s
 
 ### Usage
 
-This scalafix rule will wrap methods in a flow logger block, using a [flow or trace logger](https://github.com/tersesystems/echopraxia-plusscala#trace-and-flow-loggers).
-
-For example, 
+The given method:
 
 ```scala
 object Main {
