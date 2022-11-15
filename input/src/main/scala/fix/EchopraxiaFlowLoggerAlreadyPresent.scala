@@ -1,6 +1,6 @@
 /*
 rule = EchopraxiaWrapMethodWithLogger
-*/
+ */
 package fix
 
 import com.tersesystems.echopraxia.plusscala.flow._

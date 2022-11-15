@@ -1,7 +1,7 @@
 /*
 rule = EchopraxiaRewriteToStructured
 EchopraxiaRewriteToStructured.loggerName = logger
-*/
+ */
 package fix
 
 import com.tersesystems.echopraxia.plusscala.LoggerFactory
@@ -18,7 +18,7 @@ object EchopraxiaRewriteToStructured_Test {
     logger.info(s"hello $world there are $count statements")
   }
 
-  final def someException: Unit = {    
+  final def someException: Unit = {
     val e = new RuntimeException()
     logger.info(s"exception $e")
   }
@@ -34,7 +34,10 @@ object EchopraxiaRewriteToStructured_Test {
   final def already: Unit = {
     val world = "world"
     val count = 3
-    logger.info("hello {} there are {} statements", fb => fb.list(fb.value("world", world), fb.value("count", count)))
+    logger.info(
+      "hello {} there are {} statements",
+      fb => fb.list(fb.value("world", world), fb.value("count", count))
+    )
   }
 
   final def notEchopraxiaLogger: Unit = {

@@ -6,17 +6,9 @@ val echopraxiaPlusScalaVersion = "1.1.2"
 inThisBuild(
   List(
     organization := "com.tersesystems",
-    homepage := Some(url("https://github.com/wsargent/echopraxia-scalafix")),
+    homepage := Some(url("https://github.com/tersesystems/echopraxia-scalafix")),
     licenses := List(
       "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
-    ),
-    developers := List(
-      Developer(
-        "wsargent",
-        "Will Sargent",
-        "example@email.com",
-        url("https://tersesystems.com")
-      )
     ),
     semanticdbEnabled := true,
     semanticdbVersion := scalafixSemanticdb.revision
