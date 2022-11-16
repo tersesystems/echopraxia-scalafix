@@ -6,12 +6,18 @@ val echopraxiaPlusScalaVersion = "1.1.2"
 inThisBuild(
   List(
     organization := "com.tersesystems.echopraxia",
-    homepage := Some(url("https://github.com/tersesystems/echopraxia-scalafix")),
-    licenses := List(
-      "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
-    ),
     semanticdbEnabled := true,
     semanticdbVersion := scalafixSemanticdb.revision
+  )
+)
+
+ThisBuild / homepage     := Some(url("https://github.com/tersesystems/echopraxia-scalafix"))
+ThisBuild / startYear := Some(2022)
+ThisBuild / licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt"))
+ThisBuild / scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/tersesystems/echopraxia-scalafix"),
+    "scm:git@github.com:tersesystems/echopraxia-scalafix.git"
   )
 )
 
