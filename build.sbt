@@ -5,7 +5,7 @@ val echopraxiaPlusScalaVersion = "1.1.2"
 
 inThisBuild(
   List(
-    organization := "com.tersesystems",
+    organization := "com.tersesystems.echopraxia",
     homepage := Some(url("https://github.com/tersesystems/echopraxia-scalafix")),
     licenses := List(
       "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")

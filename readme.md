@@ -4,7 +4,33 @@
 
 These [scalafix](https://scalacenter.github.io/scalafix/) rules are useful for adding flow loggers to methods, and rewriting logging statements that use string interpolation to use Echopraxia's FieldBuilder API.
 
+## Installation
+
+Add scalafix to `project/plugins.sbt`:
+
+```scala
+addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.10.4")
+```
+
 ## Running
+
+If you want to include the scalafix rules as part of the project to run automatically:
+
+Add echopraxia-scalafix to `build.sbt` and enable semanticDB:
+
+```
+ThisBuild / scalafixDependencies += "com.tersesystems.echopraxia" %% "scalafix" % VERSION
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+```
+
+And then add rules to `.scalafix.conf` as per [configuration](https://scalacenter.github.io/scalafix/docs/users/configuration.html):
+
+```hocon
+rules = [
+  EchopraxiaRewriteToStructured
+]
+```
 
 Most likely you will want to use the [sbt integration](https://scalacenter.github.io/scalafix/docs/users/installation.html) and do it from inside there, using the [external rules](https://scalacenter.github.io/scalafix/docs/rules/external-rules.html):
 
@@ -14,9 +40,11 @@ This scalafix rule will rewrite statements that use string interpolation to stru
 
 ### Running
 
+To run immediately (without `build.sbt` changes):
+
 ```
 scalafixEnable
-scalafix dependency:EchopraxiaRewriteToStructured@com.tersesystems.echopraxia:scalafix:VERSION
+scalafix dependency:EchopraxiaRewriteToStructured@com.tersesystems.echopraxia:scalafix:$VERSION
 ```
 
 ### Usage
@@ -61,6 +89,8 @@ EchopraxiaRewriteToStructured.loggerClass = MyLoggerClass
 This scalafix rule will wrap methods in a flow logger block, using a [flow or trace logger](https://github.com/tersesystems/echopraxia-plusscala#trace-and-flow-loggers).
 
 ### Running
+
+To run immediately (without `build.sbt` changes):
 
 ```
 scalafixEnable
