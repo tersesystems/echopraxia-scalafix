@@ -1,6 +1,6 @@
 package fix
 
-import metaconfig.ConfDecoder
+import metaconfig.{ConfDecoder, Configured}
 import metaconfig.generic.Surface
 import scalafix.v1._
 
@@ -15,6 +15,11 @@ class EchopraxiaRewriteToStructured(
 
   def this() = this(EchopraxiaRewriteToStructured.Config())
 
+  override def withConfiguration(config: Configuration): Configured[Rule] =
+    config.conf
+      .getOrElse("EchopraxiaRewriteToStructured")(this.config)
+      .map { newConfig => new EchopraxiaRewriteToStructured(newConfig) }
+
   override def fix(implicit doc: SemanticDocument): Patch = {
     doc.tree.collect {
       case logger @ Term.Apply(
@@ -28,12 +33,11 @@ class EchopraxiaRewriteToStructured(
   private def matchesType(
       qual: Term
   )(implicit doc: SemanticDocument): Boolean = {
-    val logger = SymbolMatcher.normalized(loggerClass)
+    val loggerSymbolMatcher = SymbolMatcher.normalized(loggerClass)
     val info: SymbolInformation = qual.symbol.info.get
     info.signature match {
       case MethodSignature(_, _, TypeRef(_, symbol, _)) =>
-        // println("symbol = " + symbol.structure)
-        logger.matches(symbol)
+        loggerSymbolMatcher.matches(symbol)
       case other =>
         // println("other symbol = " + other.structure)
         false
@@ -50,7 +54,12 @@ class EchopraxiaRewriteToStructured(
     signature match {
       case ValueSignature(TypeRef(_, symbol, _)) =>
         val cl = this.getClass.getClassLoader
-        classOf[Throwable].isAssignableFrom(cl.loadClass(toFqn(symbol)))
+        try {
+          classOf[Throwable].isAssignableFrom(cl.loadClass(toFqn(symbol)))
+        } catch {
+          case e: Exception =>
+            false
+        }
       case _ =>
         false
     }

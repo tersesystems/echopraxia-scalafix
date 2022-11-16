@@ -1,6 +1,5 @@
 /*
 rule = EchopraxiaRewriteToStructured
-EchopraxiaRewriteToStructured.loggerName = logger
  */
 package fix
 
