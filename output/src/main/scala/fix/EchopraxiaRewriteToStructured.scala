@@ -11,10 +11,9 @@ object EchopraxiaRewriteToStructured_Test {
   final def someMethod: Unit = {
     val world = "world"
     val count = 3
-    logger.info(
-      "hello {} there are {} statements",
-      fb => fb.list(fb.value("world", world), fb.value("count", count))
-    )
+    // format: off
+    logger.info("hello {} there are {} statements", fb => fb.list(fb.value("world", world), fb.value("count", count)))
+    // format: on
   }
 
   final def someException: Unit = {
@@ -27,10 +26,9 @@ object EchopraxiaRewriteToStructured_Test {
   }
 
   final def directMethod: Unit = {
-    logger.debug(
-      "{}",
-      fb => fb.value("System.currentTimeMillis", System.currentTimeMillis)
-    )
+    // format: off
+    logger.debug("{}", fb => fb.value("System.currentTimeMillis", System.currentTimeMillis))
+    // format: on
   }
 
   final def already: Unit = {

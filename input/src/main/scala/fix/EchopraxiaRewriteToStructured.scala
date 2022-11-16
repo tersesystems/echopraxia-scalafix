@@ -15,7 +15,9 @@ object EchopraxiaRewriteToStructured_Test {
   final def someMethod: Unit = {
     val world = "world"
     val count = 3
+    // format: off
     logger.info(s"hello $world there are $count statements")
+    // format: on
   }
 
   final def someException: Unit = {
@@ -28,7 +30,9 @@ object EchopraxiaRewriteToStructured_Test {
   }
 
   final def directMethod: Unit = {
+    // format: off
     logger.debug(s"${System.currentTimeMillis}")
+    // format: on
   }
 
   final def already: Unit = {
