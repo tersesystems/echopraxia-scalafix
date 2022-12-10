@@ -2,6 +2,7 @@ package fix
 
 import metaconfig.{ConfDecoder, Configured}
 import metaconfig.generic.Surface
+import scalafix.lint.RuleDiagnostic
 import scalafix.v1._
 
 import scala.meta._
@@ -27,6 +28,15 @@ class EchopraxiaRewriteToStructured(
             List(Term.Interpolate(Term.Name("s"), parts, args))
           ) if matchesType(loggerName) =>
         Patch.replaceTree(logger, rewrite(loggerName, methodName, parts, args))
+
+      case loggerWithArg @ Term.Apply(
+            Term.Select(loggerName, methodName),
+            List(Term.Interpolate(Term.Name("s"), parts, args), argumentTerm)
+          ) =>
+        Patch.replaceTree(
+          loggerWithArg,
+          rewrite(loggerName, methodName, parts, args :+ argumentTerm)
+        )
     }.asPatch
   }
 
@@ -102,7 +112,7 @@ object EchopraxiaRewriteToStructured {
   )
 
   object Config {
-    val default = Config()
+    val default: Config = Config()
 
     implicit val surface: Surface[Config] =
       metaconfig.generic.deriveSurface[Config]

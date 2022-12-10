@@ -24,6 +24,12 @@ object EchopraxiaRewriteToStructured_Test {
     logger.info(s"exception $e")
   }
 
+  final def exceptionArgument: Unit = {
+    val world = "world"
+    val e = new RuntimeException()
+    logger.info(s"exception ${world}", e)
+  }
+
   final def noSubstitute: Unit = {
     logger.debug(s"hello world there are count statements")
   }
