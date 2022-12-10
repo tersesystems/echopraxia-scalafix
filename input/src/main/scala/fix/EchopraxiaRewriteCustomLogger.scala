@@ -4,23 +4,9 @@ EchopraxiaRewriteToStructured.loggerClass = fix.MyLogger
  */
 package fix
 
-import com.tersesystems.echopraxia.api.{
-  Caller,
-  CoreLogger,
-  CoreLoggerFactory,
-  FieldBuilderResult,
-  Utilities
-}
-import com.tersesystems.echopraxia.plusscala.{
-  DefaultLoggerMethods,
-  LoggerMethods
-}
-import com.tersesystems.echopraxia.plusscala.api.{
-  Condition,
-  DefaultMethodsSupport,
-  FieldBuilder,
-  LoggerSupport
-}
+import com.tersesystems.echopraxia.api.{Caller, CoreLogger, CoreLoggerFactory, FieldBuilderResult, Utilities}
+import com.tersesystems.echopraxia.plusscala.{DefaultLoggerMethods, LoggerMethods}
+import com.tersesystems.echopraxia.plusscala.api.{Condition, DefaultMethodsSupport, FieldBuilder, LoggerSupport}
 
 object EchopraxiaRewriteCustomLogger {
 
@@ -36,18 +22,13 @@ object EchopraxiaRewriteCustomLogger {
 
 }
 
-trait MyLogger[FB]
-    extends LoggerMethods[FB]
-    with LoggerSupport[FB, MyLogger]
-    with DefaultMethodsSupport[FB]
+trait MyLogger[FB] extends LoggerMethods[FB] with LoggerSupport[FB, MyLogger] with DefaultMethodsSupport[FB]
 
 object MyLogger {
   def apply[FB](core: CoreLogger, fieldBuilder: FB): MyLogger[FB] =
     new Impl[FB](core, fieldBuilder)
 
-  class Impl[FB](val core: CoreLogger, val fieldBuilder: FB)
-      extends MyLogger[FB]
-      with DefaultLoggerMethods[FB] {
+  class Impl[FB](val core: CoreLogger, val fieldBuilder: FB) extends MyLogger[FB] with DefaultLoggerMethods[FB] {
     override def name: String = core.getName
 
     override def withCondition(condition: Condition): MyLogger[FB] = {
