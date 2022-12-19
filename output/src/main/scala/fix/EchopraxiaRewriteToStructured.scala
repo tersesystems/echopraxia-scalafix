@@ -51,4 +51,48 @@ object EchopraxiaRewriteToStructured_Test {
     val count = 3
     slf4jLogger.info(s"hello $world there are $count statements")
   }
+
+  final def rawStringInterpolation: Unit = {
+    val world = "world"
+    val count = 3
+    val string = s"hello $world there are $count statements"
+  }
+
+  final def exceptionFirst: Unit = {
+    val e = new RuntimeException()
+    val count = 3
+    logger.error("{} {}", fb => fb.list(fb.exception(e), fb.value("count", count)))
+  }
+
+  final def exceptionMiddle: Unit = {
+    val e = new RuntimeException()
+    val count1 = 1
+    val count2 = 2
+    logger.error("{} {} {}", fb => fb.list(fb.value("count1", count1), fb.exception(e), fb.value("count2", count2)))
+  }
+
+  final def exceptionLast: Unit = {
+    val e = new RuntimeException()
+    val count = 3
+    logger.error("{} {}", fb => fb.list(fb.value("count", count), fb.exception(e)))
+  }
+
+  final def stringWithExistingArguments: Unit = {
+    val world = "world"
+    val count = 3
+    logger.info(
+      s"hello {} there are $count statements",
+      _.keyValue("world", world)
+    )
+  }
+
+  final def stringWithExistingArgumentsFull: Unit = {
+    val three = "three"
+    logger.info(
+      s"{} {} $three",
+      fb => fb.list(
+        fb.keyValue("one", "one"),
+        fb.keyValue("two", "two")
+      ))
+  }
 }

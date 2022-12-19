@@ -27,17 +27,42 @@ class EchopraxiaRewriteToStructured(
             Term.Select(loggerName, methodName),
             List(Term.Interpolate(Term.Name("s"), parts, args))
           ) if matchesType(loggerName) =>
+        // logger.error(s"$one")
         Patch.replaceTree(logger, rewrite(loggerName, methodName, parts, args))
 
       case loggerWithArg @ Term.Apply(
             Term.Select(loggerName, methodName),
             List(Term.Interpolate(Term.Name("s"), parts, args), argumentTerm)
-          ) =>
+          ) if matchesException(argumentTerm) =>
+        // logger.error(s"{} $one", e)
+        // we're going to need to parse {} and keep track of the ordering.
+        val orderedArgs = reorderArguments(parts, args, argumentTerm)
         Patch.replaceTree(
           loggerWithArg,
-          rewrite(loggerName, methodName, parts, args :+ argumentTerm)
+          rewrite(loggerName, methodName, parts, orderedArgs)
         )
+
+      // don't try to do logger.info(s"$one {}", _.keyValue("foo", "bar"))
+      // and also don't try logger.info("{}" + bar + "") string concatenation.
     }.asPatch
+  }
+
+  private def matchesException(arg: Term)(implicit doc: SemanticDocument): Boolean =
+    arg.symbol.info.exists(info => isThrowable(info.signature))
+
+  private def reorderArguments(parts: List[Lit], args: List[Term], argumentTerm: Term): List[Term] = {
+    val index = parts.zipWithIndex.collectFirst {
+      case (el: Lit.String, i) if el.value.contains("{}") => i
+    }.getOrElse(-1)
+
+    index match {
+      case -1 =>
+        args :+ argumentTerm
+      case 0 =>
+        argumentTerm +: args
+      case i =>
+        (args.slice(0, i) :+ argumentTerm) ++ args.slice(i, args.length)
+    }
   }
 
   private def matchesType(
