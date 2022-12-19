@@ -73,7 +73,18 @@ final def someMethod: Unit = {
 }
 ```
 
-You can change the class of the logger as appropriate, if you have a custom logger.
+The rule can work when there is a single exception:
+
+```scala
+final def someMethod(e: Exception): Unit = {
+  val error = "some error text"
+  logger.error(s"error $error", e)
+}
+```
+
+but will not change the statement when there are other arguments or more than one exception.
+
+You can change the class of the logger as appropriate, if you have a custom logger, and change the method used:
 
 ```
 // .scalafix.conf
@@ -81,7 +92,8 @@ rules = [
   EchopraxiaRewriteToStructured
 ]
 
-EchopraxiaRewriteToStructured.loggerClass = MyLoggerClass
+EchopraxiaRewriteToStructured.loggerClass = com.example.MyLogger
+EchopraxiaRewriteToStructured.fieldBuilderMethod=keyValue
 ```
 
 ## EchopraxiaWrapMethodWithLogger
