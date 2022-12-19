@@ -44,7 +44,7 @@ class EchopraxiaRewriteToStructured(
 
       // don't try to do logger.info(s"$one {}", _.keyValue("foo", "bar"))
       // and also don't try logger.info("{}" + bar + "") string concatenation.
-    }.asPatch
+    }.asPatch.atomic // "atomic" means "respect scalafix:off"
   }
 
   private def matchesException(arg: Term)(implicit doc: SemanticDocument): Boolean =
