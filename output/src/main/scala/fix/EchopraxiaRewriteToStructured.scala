@@ -16,6 +16,14 @@ object EchopraxiaRewriteToStructured_Test {
     // format: on
   }
 
+  final def suppression: Unit = {
+    val world = "world"
+    val count = 3
+    // format: off
+    logger.info(s"hello $world there are $count statements") // scalafix:ok
+    // format: on
+  }
+
   final def someException: Unit = {
     val e = new RuntimeException()
     logger.info("exception {}", fb => fb.exception(e))

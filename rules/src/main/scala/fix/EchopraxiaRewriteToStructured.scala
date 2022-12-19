@@ -29,6 +29,7 @@ class EchopraxiaRewriteToStructured(
           ) if matchesType(loggerName) =>
         // logger.error(s"$one")
         Patch.replaceTree(logger, rewrite(loggerName, methodName, parts, args))
+          .atomic // "atomic" means "respect scalafix:off"
 
       case loggerWithArg @ Term.Apply(
             Term.Select(loggerName, methodName),
@@ -40,11 +41,11 @@ class EchopraxiaRewriteToStructured(
         Patch.replaceTree(
           loggerWithArg,
           rewrite(loggerName, methodName, parts, orderedArgs)
-        )
+        ).atomic // "atomic" means "respect scalafix:off"
 
       // don't try to do logger.info(s"$one {}", _.keyValue("foo", "bar"))
       // and also don't try logger.info("{}" + bar + "") string concatenation.
-    }.asPatch.atomic // "atomic" means "respect scalafix:off"
+    }.asPatch
   }
 
   private def matchesException(arg: Term)(implicit doc: SemanticDocument): Boolean =
