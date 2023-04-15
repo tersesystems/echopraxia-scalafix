@@ -114,10 +114,11 @@ class EchopraxiaRewriteToStructured(
       val template = parts.map(_.value.toString).mkString("{}")
       val values = args.map {
         case arg: Term.Name =>
-          if (isThrowable(arg.symbol.info.get.signature)) {
-            s"""fb.exception($arg)"""
-          } else {
-            s"""fb.$fieldBuilderMethod("$arg", $arg)"""
+          arg.symbol.info match {
+            case Some(info) if (isThrowable(info.signature)) =>
+              s"""fb.exception($arg)"""
+            case _ =>
+              s"""fb.$fieldBuilderMethod("$arg", $arg)"""
           }
         case other =>
           // XXX I don't think this is possible?
